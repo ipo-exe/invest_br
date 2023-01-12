@@ -1,0 +1,37 @@
+Id;Name;Type;Color
+1;Forest;Natural;#129912
+3;Forest Formation;Natural;#006400
+4;Savanna Formation;Natural;#00ff00
+5;Mangrove;Natural;#687537
+49;Wooded Sandbank Vegetation;Natural;#6b9932
+10;Non-Forest Natural Formation;Natural;#bbfcac
+11;Wetland;Natural;#45c2a5
+12;Grassland;Natural;#b8af4f
+32;Salt-Flat;Natural;#968c46
+29;Rocky Outcrop;Natural;#ff8C00
+50;Herbaceus Sandbank Vegetation;Natural;#66ffcc
+13;Other non Forest Formations;Natural;#bdb76b
+14;Farming;Unnatural;#ffffb2
+15;Pasture;Unnatural;#ffd966
+18;Agriculture;Unnatural;#e974ed
+19;Temporary Crop;Unnatural;#d5a6bd
+39;Soybean;Unnatural;#c59ff4
+20;Sugar cane;Unnatural;#c27ba0
+40;Rice;Unnatural;#982c9e
+62;Cotton;Unnatural;#660066
+41;Other Temporary Crops;Unnatural;#e787f8
+36;Perennial Crop;Unnatural;#f3b4f1
+46;Coffe;Unnatural;#cca0d4
+47;Citrus;Unnatural;#d082de
+48;Other Perennial Crops;Unnatural;#cd49e4
+9;Forest Plantation;Unnatural;#935132
+21;Mosaic of Uses;Unnatural;#fff3bf
+22;Non-vegetated area;Natural;#ea9999
+23;Beach Dune and Sand Spot;Natural;#dd7e6b
+24;Urban Area;Unnatural;#af2a2a
+30;Mining;Unnatural;#8a2be2
+25;Other non Vegetated Areas;Unnatural;#ff99ff
+26;Water;Natural;#0000ff
+33;River Lake Ocean;Natural;#0000ff
+31;Aquaculture;Unnatural;#29eee4
+27;Non Observed;Unnatural;#D5D5E5

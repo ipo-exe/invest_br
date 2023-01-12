@@ -12,7 +12,7 @@ s_grid_file = "{}/grid_br_aoi.gpkg".format(s_input_dir)
 s_grid_lyr_name = "grid_br_aoi"
 # set the LULC file path
 # todo change by lulc_aoi.tif
-s_lulc_file = "{}/mapbiomas_aoi.tif".format(s_input_dir)
+s_lulc_file = "{}/lulc_noroads_aoi.tif".format(s_input_dir)
 # set output path
 s_output_dir = "C:/bin/invest_br"
 
