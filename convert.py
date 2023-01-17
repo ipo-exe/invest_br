@@ -17,7 +17,7 @@ s_biomas_file = "C:/gis/invest/biomas_aoi.tif"
 s_output_dir = "C:/gis/invest"
 
 # boolean control
-b_skip_raster = False
+b_raster = True
 
 # -----------------------------------------------------------------------------
 # DEFINE VARIABLES
@@ -43,8 +43,10 @@ f.close()
 # deploy empty lists
 lst_natural = []
 lst_natural_ids = []
+lst_natural_names = []
 lst_unnatural = []
 lst_unnatural_ids = []
+lst_unnatural_names = []
 # loop
 for line in lst_lines_full:
     lst_line = line[:-1].split(";")
@@ -53,11 +55,16 @@ for line in lst_lines_full:
         lst_natural.append(line[:-1])
         # append id
         lst_natural_ids.append(int(lst_line[0]))
+        # append name
+        lst_natural_names.append(lst_line[1])
     elif lst_line[2].lower() == "unnatural":
         # append line
         lst_unnatural.append(line[:-1])
         # append id
         lst_unnatural_ids.append(int(lst_line[0]))
+        # append name
+        lst_unnatural_names.append(lst_line[1])
+
 
 # -----------------------------------------------------------------------------
 # READ RASTER FILES
@@ -114,20 +121,47 @@ for e in lst_unique_biomas_full:
         pass
     else:
         lst_unique_biomas.append(e)
+
+
+#lst_unique_biomas = [4, 5]
+
 n_biomas = len(lst_unique_biomas)
+
 
 # -----------------------------------------------------------------------------
 # PROCESSING -- GET CONVERSION TABLE
 print("processing ... table")
-lst_new_table = []
-# append header
-lst_line = lst_lines_full[0].split(";")
-# change Type to Biome
-lst_line[2] = "Biome"
-lst_line = lst_line[:-1]
-s_row = ";".join(lst_line)
 
-lst_new_table.append("{}\n".format(s_row))
+lst_output_table = []
+
+# --- append header
+lst_line = [
+    'LULC',
+    'NAME',
+    'HABITAT'
+]
+for threat in lst_unnatural_names:
+    lst_line.append(threat.upper())
+# deploy string row
+s_row = ",".join(lst_line)
+#print(s_row)
+# append row
+lst_output_table.append("{}\n".format(s_row))
+
+# --- append void - first line
+lst_line = [
+    '0',
+    'Void',
+    '0.0'
+]
+for threat in lst_unnatural_names:
+    lst_line.append('0.0')
+# deploy string row
+s_row = ",".join(lst_line)
+#print(s_row)
+# append row
+lst_output_table.append("{}\n".format(s_row))
+
 # deploy conversion dict
 dct_convert = {}
 # deploy counter
@@ -137,7 +171,6 @@ n_counter = 1
 for line in lst_unnatural:
     # get line list
     lst_line = line.split(";")
-    
     # get mapbiomas id
     n_mapbiomas_id = int(lst_line[0])
     
@@ -146,10 +179,19 @@ for line in lst_unnatural:
     
     # change line id
     lst_line[0] = str(n_counter)
-    
-    # append to new table
-    s_row = ";".join(lst_line[:-1])
-    lst_new_table.append("{}\n".format(s_row))
+
+    lst_line_new = [
+        str(n_counter),
+        lst_line[1],
+        '0.0'
+    ]
+    for threat in lst_unnatural_names:
+        lst_line_new.append('0.0')
+
+    # deploy string row
+    s_row = ",".join(lst_line_new)
+    #print(s_row)
+    lst_output_table.append("{}\n".format(s_row))
     
     # update counter
     n_counter = n_counter + 1
@@ -162,12 +204,15 @@ lst_roads = [
 ]
 for e in lst_roads:
     # get row
-    lst_line = ["0", e, "Unnatural"]
-    lst_line[0] = str(n_counter)
+    lst_line_new = ["0", e, "0.0"]
+    for threat in lst_unnatural_names:
+        lst_line_new.append('0.0')
+    lst_line_new[0] = str(n_counter)
     
     # append to new table
-    s_row = ";".join(lst_line)
-    lst_new_table.append("{}\n".format(s_row))
+    s_row = ",".join(lst_line_new)
+    #print(s_row)
+    lst_output_table.append("{}\n".format(s_row))
     
     # update counter
     n_counter = n_counter + 1 
@@ -198,29 +243,38 @@ for b in lst_unique_biomas:
         s_old_name = lst_line[1]
         s_new_name = "{} - {}".format(s_old_name, s_biome_name)
         lst_line[1] = s_new_name
-        
+
+        lst_line_new = [
+            str(n_counter),
+            s_new_name,
+            "1.0"
+        ]
+        for threat in lst_unnatural_names:
+            lst_line_new.append('0.0')
+
         # append to new table
-        s_row = ";".join(lst_line[:-1])
-        lst_new_table.append("{}\n".format(s_row))
+        s_row = ",".join(lst_line_new)
+        
+        lst_output_table.append("{}\n".format(s_row))
         
         # update counter
         n_counter = n_counter + 1
 '''
 # --------- print
-for line in lst_new_table:
-    print(line)
+for line in lst_output_table:
+    print(line[:-1])
 '''
 
 # -----------------------------------------------------------------------------
 # EXPORT LULC TABLE
 s_file_name = "{}/lulc_table.csv".format(s_output_dir)
 with open(s_file_name, "w") as file:
-    file.writelines(lst_new_table)
+    file.writelines(lst_output_table)
 
-
-if b_skip_raster:
-    # -----------------------------------------------------------------------------
-    # PROCESSING -- SCANNING LOOP
+# -----------------------------------------------------------------------------
+# PROCESSING -- SCANNING LOOP
+if b_raster:
+    
     print("processing ... loop")
     tpl_shape = np.shape(grid_mapbiomas)
 
