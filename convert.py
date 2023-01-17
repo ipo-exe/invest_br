@@ -17,7 +17,7 @@ s_biomas_file = "C:/gis/invest/biomas_aoi.tif"
 s_output_dir = "C:/gis/invest"
 
 # boolean control
-b_raster = True
+b_raster = False
 
 # -----------------------------------------------------------------------------
 # DEFINE VARIABLES
@@ -63,9 +63,18 @@ for line in lst_lines_full:
         # append id
         lst_unnatural_ids.append(int(lst_line[0]))
         # append name
-        lst_unnatural_names.append(lst_line[1])
+        lst_unnatural_names.append("_".join(lst_line[1].split()))
 
+# append roads to unnatural names
+lst_roads = [
+    "Road Low Traffic",
+    "Road Moderate Traffic",
+    "Road High Traffic"
+]
+for r in lst_roads:
+    lst_unnatural_names.append(r)
 
+'''
 # -----------------------------------------------------------------------------
 # READ RASTER FILES
 print("reading")
@@ -122,15 +131,15 @@ for e in lst_unique_biomas_full:
     else:
         lst_unique_biomas.append(e)
 
-
-#lst_unique_biomas = [4, 5]
+'''
+lst_unique_biomas = [4, 5]
 
 n_biomas = len(lst_unique_biomas)
 
 
 # -----------------------------------------------------------------------------
-# PROCESSING -- GET CONVERSION TABLE
-print("processing ... table")
+# PROCESSING -- GET LULC TABLE
+print("processing ... lulc table")
 
 lst_output_table = []
 
@@ -267,7 +276,32 @@ for line in lst_output_table:
 
 # -----------------------------------------------------------------------------
 # EXPORT LULC TABLE
-s_file_name = "{}/lulc_table.csv".format(s_output_dir)
+s_file_name = "{}/lulc.csv".format(s_output_dir)
+with open(s_file_name, "w") as file:
+    file.writelines(lst_output_table)
+
+# -----------------------------------------------------------------------------
+# PROCESSING -- GET THREATS TABLE
+lst_output_table = []
+# append header
+lst_line = ["THREAT","MAX_DIST","WEIGHT","DECAY","CUR_PATH"]
+s_row = ",".join(lst_line)
+lst_output_table.append("{}\n".format(s_row))
+# append all rows
+for threat in lst_unnatural_names:
+    lst_line = [
+        threat.upper(),
+        "1.0",
+        "1.0",
+        "linear",
+        "{}.tif".format(threat.lower())
+    ]
+    s_row = ",".join(lst_line)
+    lst_output_table.append("{}\n".format(s_row))
+
+# -----------------------------------------------------------------------------
+# EXPORT THREAT TABLE
+s_file_name = "{}/threats.csv".format(s_output_dir)
 with open(s_file_name, "w") as file:
     file.writelines(lst_output_table)
 
